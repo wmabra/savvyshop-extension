@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    width: 240px;
+    padding: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8fafc;
+    margin: 0;
+    color: #1e1b4b;
+  }
+  .logo {
+    font-size: 18px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+  }
+  .stat:last-child { border: none; }
+  .stat .value { font-weight: 600; color: #6366f1; }
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 12px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+  }
+  .btn:hover { background: #4f46e5; }
+  .empty { color: #94a3b8; font-size: 13px; text-align: center; padding: 8px 0; }
+</style>
+</head>
+<body>
+  <div class="logo">🛍️ SavvyShop</div>
+  <div id="stats"></div>
+  <button class="btn" id="openCompare">Compare Tabs</button>
+  <button class="btn btn-outline" id="findSimilar" style="margin-top:6px;background:#f0fdf4;color:#16a34a;border:1px solid #16a34a">🔍 Find Similar Products</button>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

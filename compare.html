@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SavvyShop Comparison</title>
+    <style>
+      :root {
+        --bg: #0a0a14;
+        --surface: #12122a;
+        --surface-hover: #1a1a38;
+        --border: #252545;
+        --text: #e8e8f0;
+        --muted: #8888b0;
+        --accent: #818cf8;
+        --accent2: #a78bfa;
+        --green: #34d399;
+        --green-bg: rgba(52, 211, 153, 0.1);
+        --amber: #fbbf24;
+        --amber-bg: rgba(251, 191, 36, 0.1);
+        --red: #f87171;
+        --red-bg: rgba(248, 113, 113, 0.1);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        padding: 28px 32px;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+      /* ── Header ── */
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+      }
+      .header-left h1 {
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .header-left p {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 2px;
+      }
+      .header-badge {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      /* ── Product Grid ── */
+      .products-grid {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 28px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+      }
+      .product-card {
+        flex: 0 0 240px;
+        position: relative;
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid var(--border);
+        transition: all 0.25s ease;
+      }
+      .product-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(129, 140, 248, 0.12);
+      }
+      .product-card:hover .close-btn {
+        opacity: 1;
+      }
+      .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 24px;
+        height: 24px;
+        background: rgba(248, 113, 113, 0.15);
+        color: var(--red);
+        border: 1px solid rgba(248, 113, 113, 0.3);
+        border-radius: 50%;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .close-btn:hover {
+        background: var(--red);
+        color: white;
+      }
+      /* Store banner */
+      .product-img {
+        height: 70px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+      }
+      .store-logo-img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        margin-bottom: 4px;
+      }
+      .store-badge-fallback {
+        font-size: 28px;
+        margin-bottom: 4px;
+        display: none;
+      }
+      .store-name {
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 600;
+      }
+      /* Badges */
+      .badge-row {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+        min-height: 22px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+      .badge-winner {
+        background: var(--green-bg);
+        color: var(--green);
+        border: 1px solid rgba(52, 211, 153, 0.3);
+      }
+      .badge-best-price {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+      .badge-top-rated {
+        background: var(--amber-bg);
+        color: var(--amber);
+      }
+      .badge-price-warn {
+        background: var(--red-bg);
+        color: var(--red);
+      }
+      /* Content */
+      .title {
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.35;
+        margin-bottom: 10px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: var(--text);
+      }
+      .price {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--green);
+        margin-bottom: 2px;
+        letter-spacing: -0.5px;
+      }
+      .price .price-est {
+        font-size: 10px;
+        color: var(--amber);
+        font-weight: 400;
+        margin-left: 5px;
+      }
+      .no-price {
+        color: var(--muted) !important;
+        font-size: 14px !important;
+      }
+      .savvy-score {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 8px 0;
+        padding: 6px 10px;
+        background: rgba(52, 211, 153, 0.08);
+        border-radius: 8px;
+        border: 1px solid rgba(52, 211, 153, 0.15);
+      }
+      .savvy-score .score-number {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--green);
+      }
+      .savvy-score .score-grade {
+        font-size: 10px;
+        color: var(--green);
+        font-weight: 600;
+        opacity: 0.8;
+      }
+      .savvy-score.no-score {
+        background: rgba(248, 113, 113, 0.08);
+        border-color: rgba(248, 113, 113, 0.15);
+      }
+      .savvy-score.no-score .score-number,
+      .savvy-score.no-score .score-grade {
+        color: var(--red);
+      }
+      .meta {
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .source-tag {
+        display: inline-block;
+        background: rgba(129, 140, 248, 0.1);
+        color: var(--accent);
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        margin-top: 6px;
+        font-weight: 600;
+        text-transform: capitalize;
+      }
+      .value-score {
+        font-size: 11px;
+        color: var(--accent2);
+        margin-top: 3px;
+        font-weight: 500;
+      }
+      .unit-price {
+        font-size: 11px;
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 3px;
+      }
+      /* Winner card */
+      .card-winner {
+        border-color: var(--green) !important;
+        background: linear-gradient(
+          135deg,
+          rgba(52, 211, 153, 0.06),
+          rgba(52, 211, 153, 0.02)
+        ) !important;
+        box-shadow:
+          0 0 0 1px var(--green),
+          0 4px 24px rgba(52, 211, 153, 0.15);
+      }
+      .card-best-price {
+        border-color: rgba(52, 211, 153, 0.5) !important;
+      }
+      /* Buy links */
+      .buy-link {
+        display: block;
+        width: 100%;
+        margin-top: 12px;
+        padding: 9px 0;
+        background: var(--accent);
+        color: white !important;
+        text-align: center;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .buy-link:hover {
+        background: var(--accent2);
+        transform: translateY(-1px);
+      }
+      .buy-link-winner {
+        background: var(--green) !important;
+      }
+      .buy-link-winner:hover {
+        background: #2ecc71 !important;
+      }
+      .recommended {
+        border-color: var(--green) !important;
+      }
+      .recommended .buy-link {
+        background: var(--green) !important;
+      }
+      /* ── AI Section ── */
+      .ai-section {
+        background: linear-gradient(
+          135deg,
+          rgba(129, 140, 248, 0.06),
+          rgba(167, 139, 250, 0.06)
+        );
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+      .ai-section h2 {
+        font-size: 17px;
+        margin-bottom: 16px;
+        color: var(--accent2);
+        font-weight: 700;
+      }
+      .ai-content {
+        font-size: 14px;
+        line-height: 1.7;
+        color: var(--text);
+      }
+      .ai-content strong {
+        color: var(--green);
+      }
+      .ai-content br {
+        content: "";
+        display: block;
+        margin-bottom: 4px;
+      }
+      /* ── Action Bar ── */
+      .action-bar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 10px 22px;
+        border-radius: 12px;
+        border: none;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        letter-spacing: 0.2px;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: var(--accent2);
+      }
+      .btn-outline {
+        background: transparent;
+        color: var(--accent);
+        border: 1px solid var(--border);
+      }
+      .btn-outline:hover {
+        border-color: var(--accent);
+      }
+      /* ── Empty State ── */
+      .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+      }
+      .empty-state .icon {
+        font-size: 52px;
+        margin-bottom: 20px;
+      }
+      .empty-state h3 {
+        font-size: 16px;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .empty-state p {
+        font-size: 13px;
+        color: var(--muted);
+        opacity: 0.7;
+        line-height: 1.6;
+      }
+      /* ── Loader ── */
+      .loader {
+        position: relative;
+        text-align: center;
+        padding: 30px;
+        color: var(--accent);
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .loader::after {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        margin-left: 6px;
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.3;
+          transform: scale(0.8);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.2);
+        }
+      }
+      /* ── Progress bar ── */
+      .progress-bar {
+        width: 280px;
+        height: 6px;
+        background: var(--surface);
+        border-radius: 3px;
+        overflow: hidden;
+        margin: 12px auto;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        border-radius: 3px;
+        transition: width 0.4s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-left">
+        <h1>🛍️ SavvyShop</h1>
+        <p>AI-powered comparison shopping</p>
+      </div>
+      <div class="header-badge" id="header-count"></div>
+    </div>
+
+    <div id="products-container" class="products-grid"></div>
+
+    <div id="ai-container" class="ai-section" style="display: none">
+      <h2>🤖 AI Analysis</h2>
+      <div id="ai-content" class="ai-content"></div>
+    </div>
+
+    <div id="actions" class="action-bar" style="display: none">
+      <button class="btn btn-primary" id="btn-rescan">🔄 Re-scan Tabs</button>
+    </div>
+
+    <div id="empty" class="empty-state">
+      <div class="icon">📦</div>
+      <h3>Ready to Compare</h3>
+      <p>
+        Open 2-6 product pages in other tabs<br />and SavvyShop will compare
+        them automatically.
+      </p>
+      <p
+        style="
+          margin-top: 16px;
+          font-size: 11px;
+          color: var(--muted);
+          opacity: 0.5;
+        "
+      >
+        Works with Amazon, Walmart, Target, Best Buy &amp; more
+      </p>
+    </div>
+
+    <script src="compare.js"></script>
+  </body>
+</html>
