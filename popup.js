@@ -1,4 +1,4 @@
-// SavvyShop / DealVerdict Popup
+// SavvyShop v3 — Tab-Based Comparison Popup
 
 document.addEventListener("DOMContentLoaded", async () => {
 	const stats = document.getElementById("stats");
@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 		stats.textContent = "Open a product page, then click Find Similar";
 		return;
 	}
-
-	stats.textContent = list.length + " products ready";
+	stats.textContent =
+		list.length + " product" + (list.length > 1 ? "s" : "") + " ready";
 });
 
 document.getElementById("openCompare").addEventListener("click", () => {
@@ -21,7 +21,6 @@ document.getElementById("openCompare").addEventListener("click", () => {
 document.getElementById("findSimilar").addEventListener("click", async () => {
 	var btn = document.getElementById("findSimilar");
 
-	// Get current product from background
 	var products =
 		(await chrome.runtime.sendMessage({ action: "getProducts" })) || [];
 	var list = products.filter((p) => p && p.title);
@@ -37,29 +36,43 @@ document.getElementById("findSimilar").addEventListener("click", async () => {
 	btn.textContent = "⏳ Searching...";
 	btn.disabled = true;
 
-	// Wipe ALL stale data from previous searches before starting fresh
-	var searchId = Date.now();
-	chrome.storage.local.clear(() => {
-		chrome.storage.local.set(
-			{
-				searchResults: [currentProduct],
-				searchStatus: "searching",
-				searchId: searchId,
-			},
-			() => {
-				chrome.tabs.create({
-					url: chrome.runtime.getURL(
-						"compare.html?mode=search&sid=" + searchId,
-					),
-				});
-			},
-		);
+	// Get the actual product tab (not the popup)
+	const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+	const currentTab = tabs.find(
+		(t) => t.url && !t.url.startsWith("chrome-extension://"),
+	);
+	const domain = currentTab
+		? new URL(currentTab.url).hostname.replace("www.", "")
+		: "";
+
+	// Start tab-based comparison
+	const searchId = Date.now();
+	chrome.storage.local.set({
+		comparisonStatus: "searching",
+		comparisonId: searchId,
 	});
 
-	// Search — pass current product so background can include it
-	await chrome.runtime.sendMessage({
-		action: "findSimilar",
-		query: currentProduct.title,
-		currentProduct: currentProduct,
-	});
+	chrome.runtime.sendMessage(
+		{
+			action: "findSimilarTabs",
+			query: currentProduct.title,
+			currentDomain: domain,
+			currentTabId: currentTab.id,
+			price: currentProduct.price,
+			rating: currentProduct.rating,
+			reviewCount: currentProduct.reviewCount,
+		},
+		(response) => {
+			if (response && response.comparisonId) {
+				// Background opens the comparison tab — just close popup
+				window.close();
+			} else {
+				btn.textContent = "⚠️ Search failed";
+				setTimeout(() => {
+					btn.textContent = "🔍 Find Similar Products";
+					btn.disabled = false;
+				}, 3000);
+			}
+		},
+	);
 });
